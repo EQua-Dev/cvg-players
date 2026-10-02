@@ -7,15 +7,19 @@ Part of the CVG FC Club Management System, built by Devstrike Digital Limited.
 - **API:** [cvg-backend](https://github.com/EQua-Dev/cvg-backend) (Kotlin Spring Boot)
 - **Plan:** [content plan](https://github.com/EQua-Dev/cvg-backend/blob/main/docs/CONTENT_PLAN.md)
 
-## What's in it (M1)
+## What's in it
 
 | Screen | What it does |
 |---|---|
 | Sign in | Phone + passcode. First time: last 4 digits of the phone |
 | Set passcode | Short steps, one box per screen, with "Skip for now" on first sign-in |
-| Home | Member pass (name, CVG ID, jersey, status) and a "For you" to-do list |
+| Home | Member pass (tap for ID card), your style, and a "For you" to-do list (photo, questionnaire, passcode) |
 | Squad | Current squad by jersey, with you highlighted |
-| Me | Profile, change passcode, sign out |
+| Me | Profile, edit profile, ID card, how I play, change passcode, sign out |
+| **Join** `/join/{token}` | From the admin's WhatsApp link: welcome → pick a passcode → signed in → profile setup |
+| **Profile setup** | 10 one-tap steps: photo (cropped and shrunk on the phone), main position, other positions, foot, weak foot, strengths, weaknesses, about you, emergency contact, photo permission. Saved after every step, resumes where you stopped |
+| **How do you play?** | 15 one-tap questions for your position group, auto-advancing; resumes if you leave. Result: label, game plan bars, share on WhatsApp |
+| **ID card** | Front and back drawn as SVG; tap to flip; QR links to the public verify page; "Save to phone" downloads a PNG |
 
 Dark "pitch at night" theme with orange accents, per the design.
 

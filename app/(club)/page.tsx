@@ -1,13 +1,42 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { api, type Profile, type ProfilingResult } from "@/lib/api";
 import { firstName, greeting, jersey, STATUS_LABEL } from "@/lib/format";
 import { useSession } from "@/components/Session";
 import { TopBar } from "@/components/ui";
 
+interface Todo {
+  href: string;
+  title: string;
+  hint: string;
+}
+
 export default function HomePage() {
   const { me } = useSession();
   const m = me.member;
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [style, setStyle] = useState<ProfilingResult | null | undefined>(undefined);
+
+  useEffect(() => {
+    api<Profile>("/me/profile").then(setProfile).catch(() => {});
+    api<{ result: ProfilingResult } | undefined>("/me/profiling")
+      .then((r) => setStyle(r?.result ?? null))
+      .catch(() => setStyle(null));
+  }, []);
+
+  // The home screen is a to-do list: only what needs this member now.
+  const todos: Todo[] = [];
+  if (profile && !profile.complete) {
+    todos.push({ href: "/setup", title: profile.photoUrl ? "Finish your profile" : "Add your photo", hint: `${profile.missing.length} thing${profile.missing.length > 1 ? "s" : ""} left` });
+  }
+  if (profile && style === null) {
+    todos.push({ href: "/profiling", title: "How do you play?", hint: "14 quick taps" });
+  }
+  if (me.usesDefaultPasscode) {
+    todos.push({ href: "/passcode", title: "Set your passcode", hint: "Takes 10 seconds" });
+  }
 
   return (
     <>
@@ -17,38 +46,59 @@ export default function HomePage() {
           {greeting()}, {firstName(m)}.
         </h1>
 
-        {/* Member pass: who you are at a glance */}
-        <div className="card" style={{ borderLeft: "3px solid var(--orange)" }}>
+        {/* Member pass: who you are at a glance. Tap for the full ID card. */}
+        <Link href="/card" className="card" style={{ borderLeft: "3px solid var(--orange)", display: "block" }}>
           <div className="spread">
-            <div className="stack" style={{ gap: 4 }}>
-              <span className="label">CVG FC · Member</span>
-              <span className="h2">{m.fullName}</span>
-              <span className="mono muted">{m.code}</span>
+            <div className="row" style={{ gap: 14 }}>
+              {profile?.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img className="avatar avatar-sm" src={profile.photoUrl} alt="" />
+              ) : null}
+              <div className="stack" style={{ gap: 4 }}>
+                <span className="label">CVG FC · Member</span>
+                <span className="h2">{m.fullName}</span>
+                <span className="mono muted">{m.code}</span>
+              </div>
             </div>
             <span className="stat" style={{ fontSize: 40, color: "var(--orange)" }}>{jersey(m.jerseyNumber)}</span>
           </div>
-          <div className="row" style={{ marginTop: 12 }}>
+          <div className="spread" style={{ marginTop: 12 }}>
             <span className={`status status-${m.status}`}>● {STATUS_LABEL[m.status]}</span>
+            <span className="muted small">ID card →</span>
           </div>
-        </div>
+        </Link>
 
-        <span className="label" style={{ marginTop: 8 }}>For you</span>
-        {me.usesDefaultPasscode ? (
-          <Link href="/passcode" className="card card-link">
-            <span>
-              <strong>Set your passcode</strong>
-              <br />
-              <span className="muted small">Takes 10 seconds.</span>
+        {style && (
+          <Link href="/profiling" className="card card-link">
+            <span className="stack" style={{ gap: 4 }}>
+              <span className="label">Your style</span>
+              <strong>{style.label}</strong>
             </span>
             <span aria-hidden>→</span>
           </Link>
-        ) : (
+        )}
+
+        <span className="label" style={{ marginTop: 8 }}>For you</span>
+        {!profile ? (
+          <div className="empty"><span className="spinner" /></div>
+        ) : todos.length === 0 ? (
           <div className="card muted">You&apos;re all caught up ✓</div>
+        ) : (
+          todos.map((t) => (
+            <Link key={t.href} href={t.href} className="card card-link card-accent">
+              <span>
+                <strong>{t.title}</strong>
+                <br />
+                <span className="muted small">{t.hint}</span>
+              </span>
+              <span aria-hidden>→</span>
+            </Link>
+          ))
         )}
 
         <div className="card stack" style={{ gap: 6, borderStyle: "dashed" }}>
           <span className="label">Coming soon</span>
-          <span className="muted small">Training · Matches · Dues · Votes · Your ID &amp; FUT cards</span>
+          <span className="muted small">Training · Matches · Dues · Votes · FUT cards</span>
         </div>
       </main>
     </>

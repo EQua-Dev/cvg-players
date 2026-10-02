@@ -26,8 +26,12 @@ const TABS = [
   { href: "/me", label: "Me", icon: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 20a8 8 0 0 1 16 0" },
 ];
 
+/** Step-by-step screens get the whole screen. */
+const FOCUS_ROUTES = ["/setup", "/profiling"];
+
 export function BottomNav() {
   const path = usePathname();
+  if (FOCUS_ROUTES.some((r) => path.startsWith(r))) return null;
   return (
     <nav className="bottomnav">
       {TABS.map((t) => {
