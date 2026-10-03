@@ -199,3 +199,20 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 .money-in { color: #46c08a; }
 .money-out { color: #ff7a7e; }
 .struck { text-decoration: line-through; opacity: 0.55; }
+
+/* ---------- M4: training ---------- */
+.rsvp { display: flex; gap: 10px; }
+.rsvp button { flex: 1; height: 52px; border-radius: var(--radius); border: 1px solid var(--line); background: transparent; color: var(--text); font: 700 16px var(--font); cursor: pointer; transition: background 120ms, transform 80ms; }
+.rsvp button:active { transform: scale(0.98); }
+.rsvp .in-on { background: #46c08a; border-color: #46c08a; color: var(--ink); }
+.rsvp .out-on { background: var(--line-soft); border-color: #55665d; }
+.rsvp button:disabled { opacity: 0.5; }
+.kind { font: 700 11px var(--font); letter-spacing: 0.06em; text-transform: uppercase; }
+.kind-COMPULSORY { color: var(--orange); }
+.kind-OPTIONAL { color: var(--teal); }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-PRESENT, .dot-LATE { background: #46c08a; }
+.dot-ABSENT { background: #ff7a7e; }
+.dot-EXCUSED { background: var(--muted); }
+.sheet-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(0, 0, 0, 0.55); display: flex; align-items: flex-end; justify-content: center; }
+.sheet { width: 100%; max-width: 560px; background: var(--surface); border-radius: 16px 16px 0 0; padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 14px; }

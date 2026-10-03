@@ -41,3 +41,18 @@ export function naira(kobo: number): string {
 export function dayMonth(iso: string): string {
   return new Date(iso + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 }
+
+/** "WEDNESDAY" for the big card, "WED 16 JUL" for lists. */
+export function weekdayLong(dateIso: string): string {
+  return new Date(dateIso + "T00:00:00").toLocaleDateString("en-GB", { weekday: "long" }).toUpperCase();
+}
+
+export function sessionDay(dateIso: string): string {
+  return new Date(dateIso + "T00:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }).toUpperCase().replace(",", "");
+}
+
+/** "17:30:00" → "5:30PM" */
+export function clock(time: string): string {
+  const [h, m] = time.split(":").map(Number);
+  return `${((h + 11) % 12) + 1}:${String(m).padStart(2, "0")}${h < 12 ? "AM" : "PM"}`;
+}

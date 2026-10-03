@@ -216,3 +216,45 @@ export interface MyDues {
   open: MyDue[];
   history: PaymentRecord[];
 }
+
+// ---------- M4: training ----------
+
+export type Availability = "IN" | "OUT";
+export type OutReason = "INJURED" | "SICK" | "TRAVELLING" | "WORK" | "FAMILY" | "OTHER";
+export type Mark = "PRESENT" | "LATE" | "ABSENT" | "EXCUSED";
+
+export interface Session {
+  id: string;
+  startsAt: string;
+  date: string;
+  time: string;
+  venue: string;
+  kind: "COMPULSORY" | "OPTIONAL";
+  impromptu: boolean;
+  focus?: string;
+  status: "SCHEDULED" | "CLOSED" | "CANCELLED";
+  inCount: number;
+  outCount: number;
+  markedCount: number;
+  me?: { status: Availability; reason?: OutReason; locked: boolean; lockAt: string };
+  myMark?: Mark;
+}
+
+export interface MyAttendance {
+  stats: {
+    percent?: number;
+    counted: number;
+    attended: number;
+    late: number;
+    excused: number;
+    absent: number;
+    streak: number;
+    extras: number;
+    noShows: number;
+  };
+  recent: { sessionId: string; date: string; kind: "COMPULSORY" | "OPTIONAL"; focus?: string; venue: string; mark: Mark }[];
+}
+
+export const REASON_LABEL: Record<OutReason, string> = {
+  INJURED: "Injured", SICK: "Sick", TRAVELLING: "Travelling", WORK: "Work", FAMILY: "Family", OTHER: "Other",
+};

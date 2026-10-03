@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api, type MyDues, type Profile, type ProfilingResult } from "@/lib/api";
-import { firstName, greeting, jersey, naira, STATUS_LABEL } from "@/lib/format";
+import { api, type MyDues, type Profile, type ProfilingResult, type Session } from "@/lib/api";
+import { clock, firstName, greeting, jersey, naira, STATUS_LABEL, weekdayLong } from "@/lib/format";
+import { Rsvp } from "@/components/Rsvp";
 import { useSession } from "@/components/Session";
 import { TopBar } from "@/components/ui";
 
@@ -19,6 +20,7 @@ export default function HomePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [style, setStyle] = useState<ProfilingResult | null | undefined>(undefined);
   const [dues, setDues] = useState<MyDues | null>(null);
+  const [next, setNext] = useState<Session | null>(null);
 
   useEffect(() => {
     api<Profile>("/me/profile").then(setProfile).catch(() => {});
@@ -26,6 +28,9 @@ export default function HomePage() {
       .then((r) => setStyle(r?.result ?? null))
       .catch(() => setStyle(null));
     api<MyDues>("/me/dues").then(setDues).catch(() => {});
+    api<Session[]>("/training/sessions")
+      .then((l) => setNext(l.find((s) => s.status === "SCHEDULED") ?? null))
+      .catch(() => {});
   }, []);
 
   // The home screen is a to-do list: only what needs this member now.
@@ -51,6 +56,18 @@ export default function HomePage() {
         <h1 className="h2" style={{ fontSize: 28, marginTop: 8 }}>
           {greeting()}, {firstName(m)}.
         </h1>
+
+        {next && (
+          <div className="card stack" style={{ gap: 12 }}>
+            <div>
+              <div className="mono" style={{ fontWeight: 600, color: "var(--orange)" }}>
+                {weekdayLong(next.date)} · {new Date(next.date + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" }).toUpperCase()} · {clock(next.time)}
+              </div>
+              <div className="muted small" style={{ marginTop: 4 }}>{[next.focus, next.venue].filter(Boolean).join(" · ")} · {next.inCount} in</div>
+            </div>
+            <Rsvp session={next} onChange={setNext} big />
+          </div>
+        )}
 
         {/* Member pass: who you are at a glance. Tap for the full ID card. */}
         <Link href="/card" className="card" style={{ borderLeft: "3px solid var(--orange)", display: "block" }}>
@@ -104,7 +121,7 @@ export default function HomePage() {
 
         <div className="card stack" style={{ gap: 6, borderStyle: "dashed" }}>
           <span className="label">Coming soon</span>
-          <span className="muted small">Training · Matches · Votes · FUT cards</span>
+          <span className="muted small">Matches · Votes · FUT cards</span>
         </div>
       </main>
     </>

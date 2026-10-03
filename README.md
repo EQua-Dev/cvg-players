@@ -14,6 +14,7 @@ Part of the CVG FC Club Management System, built by Devstrike Digital Limited.
 | Sign in | Phone + passcode. First time: last 4 digits of the phone |
 | Set passcode | Short steps, one box per screen, with "Skip for now" on first sign-in |
 | Home | Member pass (tap for ID card), your style, and a "For you" to-do list (photo, questionnaire, passcode) |
+| **Training** | Your attendance %, streak and sessions, every upcoming session with **I'm in / I'm out** (in by default; out asks why with one tap; locks 2h before), and your record. Home shows the next session with the same buttons |
 | Squad | Current squad by jersey, with you highlighted |
 | **My dues** | What you owe (or "All paid ✓"), each open collection with progress, and your payment history including corrections. Home shows "Pay ₦X" when something is owed |
 | Me | Profile, edit profile, ID card, how I play, change passcode, sign out |
