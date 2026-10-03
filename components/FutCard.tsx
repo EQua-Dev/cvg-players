@@ -26,6 +26,8 @@ export interface FutCardData {
   jerseyNumber?: number;
   round?: string;
   published: boolean;
+  /** Style badge, e.g. "Counter-attacking Inside Forward". */
+  label?: string;
 }
 
 const SHAPE = "M28 0 H272 L300 28 V392 Q300 420 272 420 H28 Q0 420 0 392 V28 Z";
@@ -70,6 +72,11 @@ export const FutCard = forwardRef<SVGSVGElement, { card: FutCardData; width?: nu
         <image href={card.photo} x="122" y="34" width="148" height="148" clipPath={`url(#${id}-photo)`} preserveAspectRatio="xMidYMid slice" />
       ) : (
         <text x="196" y="128" textAnchor="middle" fill={t.text} opacity="0.6" fontFamily="IBM Plex Mono, monospace" fontWeight="700" fontSize="54">{card.jerseyNumber ?? ""}</text>
+      )}
+
+      {card.label && (
+        <text x="150" y="203" textAnchor="middle" fill={t.soft} fontFamily="Archivo, sans-serif" fontWeight="700"
+          fontSize={card.label.length > 30 ? 9.5 : 11} letterSpacing="1">{card.label.toUpperCase()}</text>
       )}
 
       {/* Name */}

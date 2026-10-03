@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, type CardView, type Member } from "@/lib/api";
+import { api, type CardView, type Member, type PlayerStyle } from "@/lib/api";
 import { FutCard } from "@/components/FutCard";
 import { Sheet } from "@/components/Sheet";
 import { ROLE_LABEL, STATUS_LABEL } from "@/lib/format";
@@ -13,6 +13,7 @@ export default function SquadPage() {
   const [members, setMembers] = useState<Member[] | null>(null);
   const [cards, setCards] = useState<CardView[]>([]);
   const [open, setOpen] = useState<CardView | null>(null);
+  const [labels, setLabels] = useState<Record<string, string | undefined>>({});
 
   useEffect(() => {
     api<Member[]>("/members").then((all) =>
@@ -22,12 +23,13 @@ export default function SquadPage() {
           .sort((a, b) => (a.jerseyNumber ?? 999) - (b.jerseyNumber ?? 999)),
       ),
     );
+    api<PlayerStyle[]>("/styles").then((l) => setLabels(Object.fromEntries(l.map((x) => [x.memberId, x.label])))).catch(() => {});
     api<CardView[]>("/cards").then((l) => setCards(l.filter((c) => c.published))).catch(() => {});
   }, []);
 
   const asCard = (c: CardView) => ({
     name: c.name, position: c.position, ovr: c.ovr, tier: c.tier, published: c.published,
-    stats: c.stats.map((s) => ({ label: s.label, value: s.value })), jerseyNumber: c.jerseyNumber, round: c.round, photo: c.photoUrl,
+    stats: c.stats.map((s) => ({ label: s.label, value: s.value })), jerseyNumber: c.jerseyNumber, round: c.round, photo: c.photoUrl, label: labels[c.memberId],
   });
 
   return (

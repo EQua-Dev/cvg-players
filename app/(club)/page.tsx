@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api, type MatchView, type MyCards, type MyDues, type MyRating, type Profile, type ProfilingResult, type Session } from "@/lib/api";
+import { api, type MatchView, type MyCards, type MyDues, type MyRating, type MyStyle, type Profile, type ProfilingResult, type Session } from "@/lib/api";
 import { clock, firstName, greeting, jersey, naira, sessionDay, STATUS_LABEL, weekdayLong } from "@/lib/format";
 import { Rsvp } from "@/components/Rsvp";
 import { useSession } from "@/components/Session";
@@ -25,6 +25,7 @@ export default function HomePage() {
   const [played, setPlayed] = useState<MatchView[]>([]);
   const [rating, setRating] = useState<MyRating | null>(null);
   const [myCard, setMyCard] = useState<MyCards | null>(null);
+  const [myStyle, setMyStyle] = useState<MyStyle | null>(null);
 
   useEffect(() => {
     api<Profile>("/me/profile").then(setProfile).catch(() => {});
@@ -40,6 +41,7 @@ export default function HomePage() {
       .catch(() => {});
     api<MyRating | undefined>("/ratings/me").then((r) => setRating(r ?? null)).catch(() => {});
     api<MyCards>("/cards/me").then(setMyCard).catch(() => {});
+    api<MyStyle>("/styles/me").then(setMyStyle).catch(() => {});
     api<MatchView[]>("/matches?when=past")
       .then((l) => setPlayed(l.filter((x) => x.inSquad && ((x.potmOpen && !x.votedPotm) || !x.gaveOpinion)).slice(0, 3)))
       .catch(() => {});
@@ -63,6 +65,9 @@ export default function HomePage() {
   }
   if (profile && style === null) {
     todos.push({ href: "/profiling", title: "How do you play?", hint: "14 quick taps" });
+  }
+  if (style && myStyle?.questionnaireDue) {
+    todos.push({ href: "/profiling", title: "New season: how do you play?", hint: "14 quick taps" });
   }
   if (me.usesDefaultPasscode) {
     todos.push({ href: "/passcode", title: "Set your passcode", hint: "Takes 10 seconds" });
@@ -133,10 +138,10 @@ export default function HomePage() {
         )}
 
         {style && (
-          <Link href="/profiling" className="card card-link">
+          <Link href="/style" className="card card-link">
             <span className="stack" style={{ gap: 4 }}>
               <span className="label">Your style</span>
-              <strong>{style.label}</strong>
+              <strong>{myStyle?.style.label ?? style.label}</strong>
             </span>
             <span aria-hidden>→</span>
           </Link>

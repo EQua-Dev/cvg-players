@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api, GROUP_LABEL, GROUP_POSITION, TIER_LABEL, type MyCards, type PositionGroup } from "@/lib/api";
+import { api, GROUP_LABEL, GROUP_POSITION, TIER_LABEL, type MyCards, type MyStyle, type PositionGroup } from "@/lib/api";
 import { FutCard, saveFutImage, toDataUrl } from "@/components/FutCard";
 import { useToast } from "@/components/Toast";
 import { TopBar } from "@/components/ui";
@@ -11,9 +11,11 @@ export default function MyCardPage() {
   const [data, setData] = useState<MyCards | null>(null);
   const [photo, setPhoto] = useState<string | undefined>();
   const [group, setGroup] = useState<PositionGroup | undefined>();
+  const [label, setLabel] = useState<string | undefined>();
   const svg = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
+    api<MyStyle>("/styles/me").then((s) => setLabel(s.style.label)).catch(() => {});
     api<MyCards>("/cards/me").then(async (d) => {
       setData(d);
       setGroup(d.latest?.group);
@@ -53,7 +55,7 @@ export default function MyCardPage() {
         <div className="card-wrap">
           <FutCard ref={svg} card={{
             name: c.name, position, ovr: shown?.ovr, tier: shown?.tier, published: !!shown?.published,
-            stats: shown?.stats.map((s) => ({ label: s.label, value: s.value })) ?? [], photo, jerseyNumber: c.jerseyNumber, round: c.round,
+            stats: shown?.stats.map((s) => ({ label: s.label, value: s.value })) ?? [], photo, jerseyNumber: c.jerseyNumber, round: c.round, label: isMain ? label : undefined,
           }} />
         </div>
         {choices.length > 1 && (

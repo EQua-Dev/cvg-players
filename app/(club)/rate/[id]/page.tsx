@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { api, errorMessage, type RateSheet } from "@/lib/api";
+import { api, errorMessage, type RateSheet, type RoleVoteSheet } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 import { TopBar } from "@/components/ui";
 
@@ -23,6 +23,7 @@ export default function RatePlayerPage() {
   const [scores, setScores] = useState<Record<string, number | undefined>>({});
   const [prefilled, setPrefilled] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
+  const [roleSheet, setRoleSheet] = useState<RoleVoteSheet | null>(null);
   const top = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,6 +34,8 @@ export default function RatePlayerPage() {
       setScores(Object.fromEntries(all.map((a) => [a.code, a.score])));
       setPrefilled(new Set(all.filter((a) => a.prefilled).map((a) => a.code)));
       window.scrollTo(0, 0);
+      if (!s.isMe) api<RoleVoteSheet>(`/ratings/me/${id}/role`).then(setRoleSheet).catch(() => setRoleSheet(null));
+      else setRoleSheet(null);
     }).catch((e) => toast.show(errorMessage(e), "alert"));
   }, [id, toast]);
 
@@ -42,6 +45,15 @@ export default function RatePlayerPage() {
     if (navigator.vibrate) navigator.vibrate(8);
     try {
       await api(`/ratings/me/${id}`, { method: "PUT", body: { scores: { [code]: v } } });
+    } catch (e) {
+      toast.show(errorMessage(e), "alert");
+    }
+  }
+
+  async function voteRole(code: string) {
+    try {
+      setRoleSheet(await api<RoleVoteSheet>(`/ratings/me/${id}/role`, { method: "PUT", body: { role: code } }));
+      if (navigator.vibrate) navigator.vibrate(8);
     } catch (e) {
       toast.show(errorMessage(e), "alert");
     }
@@ -80,6 +92,16 @@ export default function RatePlayerPage() {
           </div>
           <span className="mono small" style={{ color: answered === total ? "#46c08a" : "var(--muted)" }}>{answered}/{total}</span>
         </div>
+        {roleSheet && roleSheet.roles.length > 0 && (
+          <section className="stack" style={{ gap: 8 }}>
+            <span className="label">What role suits {roleSheet.name} best?</span>
+            <div className="chips">
+              {roleSheet.roles.map((r) => (
+                <button key={r.code} className={`chip ${roleSheet.mine === r.code ? "chip-on" : ""}`} onClick={() => voteRole(r.code)}>{r.name}</button>
+              ))}
+            </div>
+          </section>
+        )}
         {prefilled.size > 0 && <span className="muted small">Last round&apos;s answers are filled in. Change what&apos;s different.</span>}
 
         {sheet.blocks.map((b) => (

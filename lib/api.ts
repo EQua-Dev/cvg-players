@@ -428,3 +428,14 @@ export interface MyCards { latest?: CardView; history: { windowId: string; round
 export const GROUP_LABEL: Record<PositionGroup, string> = { GK: "Goalkeeper", DEF: "Defence", MID: "Midfield", ATT: "Attack" };
 export const GROUP_POSITION: Record<PositionGroup, string> = { GK: "GK", DEF: "CB", MID: "CM", ATT: "ST" };
 export const TIER_LABEL: Record<Tier, string> = { BRONZE: "Bronze", SILVER: "Silver", GOLD: "Gold", ELITE: "CVG Elite" };
+
+// ---------- M7: profiles and roles ----------
+
+export interface RoleRef { code: string; name: string }
+export interface PlanFit { code: string; name: string; fit: number; self?: number; ratings?: number; matches?: number }
+export interface PlayerStyle {
+  memberId: string; name: string; position?: string; group?: PositionGroup; label?: string; topPlan?: string; planFits: PlanFit[]; role?: RoleRef;
+  selfRole?: RoleRef; peerRoles?: { code: string; name: string; votes: number }[]; coachRole?: RoleRef; disagree?: boolean; answeredQuestionnaire?: boolean;
+}
+export interface MyStyle { style: PlayerStyle; questionnaireDue: boolean }
+export interface RoleVoteSheet { roles: RoleRef[]; mine?: string; name: string }
