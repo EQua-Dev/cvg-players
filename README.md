@@ -41,3 +41,10 @@ CVG_API_URL=http://localhost:8080 npm run dev     # http://localhost:3002
 ```bash
 npm run typecheck && npm run build
 ```
+
+## Deploy
+
+- **Vercel:** import the repo (Next.js is detected; `vercel.json` sets the region). Set `CVG_API_URL` to the Railway backend URL for Production, and to the staging backend for Preview. It's read at build time, so redeploy after changing it. `main` deploys to production, `dev` to preview.
+- **Docker:** `Dockerfile` builds a standalone server (`docker build --build-arg CVG_API_URL=http://host:8080 .`). The usual way to run everything locally is `docker compose up --build` from `cvg-backend`.
+
+Full steps: [cvg-backend/docs/DEPLOYMENT.md](https://github.com/EQua-Dev/cvg-backend/blob/main/docs/DEPLOYMENT.md).
