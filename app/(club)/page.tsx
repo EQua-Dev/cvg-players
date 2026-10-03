@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api, type Profile, type ProfilingResult } from "@/lib/api";
-import { firstName, greeting, jersey, STATUS_LABEL } from "@/lib/format";
+import { api, type MyDues, type Profile, type ProfilingResult } from "@/lib/api";
+import { firstName, greeting, jersey, naira, STATUS_LABEL } from "@/lib/format";
 import { useSession } from "@/components/Session";
 import { TopBar } from "@/components/ui";
 
@@ -18,16 +18,22 @@ export default function HomePage() {
   const m = me.member;
   const [profile, setProfile] = useState<Profile | null>(null);
   const [style, setStyle] = useState<ProfilingResult | null | undefined>(undefined);
+  const [dues, setDues] = useState<MyDues | null>(null);
 
   useEffect(() => {
     api<Profile>("/me/profile").then(setProfile).catch(() => {});
     api<{ result: ProfilingResult } | undefined>("/me/profiling")
       .then((r) => setStyle(r?.result ?? null))
       .catch(() => setStyle(null));
+    api<MyDues>("/me/dues").then(setDues).catch(() => {});
   }, []);
 
   // The home screen is a to-do list: only what needs this member now.
   const todos: Todo[] = [];
+  if (dues && dues.owedKobo > 0) {
+    const overdue = dues.open.some((d) => d.overdue);
+    todos.push({ href: "/dues", title: `Pay ${naira(dues.owedKobo)}`, hint: overdue ? "Overdue" : dues.open.filter((d) => d.state !== "PAID").map((d) => d.title).join(" · ") });
+  }
   if (profile && !profile.complete) {
     todos.push({ href: "/setup", title: profile.photoUrl ? "Finish your profile" : "Add your photo", hint: `${profile.missing.length} thing${profile.missing.length > 1 ? "s" : ""} left` });
   }
@@ -98,7 +104,7 @@ export default function HomePage() {
 
         <div className="card stack" style={{ gap: 6, borderStyle: "dashed" }}>
           <span className="label">Coming soon</span>
-          <span className="muted small">Training · Matches · Dues · Votes · FUT cards</span>
+          <span className="muted small">Training · Matches · Votes · FUT cards</span>
         </div>
       </main>
     </>

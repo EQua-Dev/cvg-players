@@ -15,6 +15,7 @@ Part of the CVG FC Club Management System, built by Devstrike Digital Limited.
 | Set passcode | Short steps, one box per screen, with "Skip for now" on first sign-in |
 | Home | Member pass (tap for ID card), your style, and a "For you" to-do list (photo, questionnaire, passcode) |
 | Squad | Current squad by jersey, with you highlighted |
+| **My dues** | What you owe (or "All paid ✓"), each open collection with progress, and your payment history including corrections. Home shows "Pay ₦X" when something is owed |
 | Me | Profile, edit profile, ID card, how I play, change passcode, sign out |
 | **Join** `/join/{token}` | From the admin's WhatsApp link: welcome → pick a passcode → signed in → profile setup |
 | **Profile setup** | 10 one-tap steps: photo (cropped and shrunk on the phone), main position, other positions, foot, weak foot, strengths, weaknesses, about you, emergency contact, photo permission. Saved after every step, resumes where you stopped |

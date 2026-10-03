@@ -30,3 +30,14 @@ export function jersey(n?: number): string {
 export function shortDate(iso: string): string {
   return new Date(iso + "T00:00:00").toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 }
+
+/** 200000 kobo → "₦2,000". */
+export function naira(kobo: number): string {
+  const n = Math.abs(kobo) / 100;
+  const s = n.toLocaleString("en-NG", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+  return `${kobo < 0 ? "−" : ""}₦${s}`;
+}
+
+export function dayMonth(iso: string): string {
+  return new Date(iso + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}

@@ -181,3 +181,38 @@ export async function upload<T>(path: string, file: Blob, filename = "photo.jpg"
   if (!res.ok) throw new ApiError(res.status, data?.code ?? "error", data?.message ?? "Upload failed.", data?.fields);
   return data as T;
 }
+
+// ---------- M3: my dues ----------
+
+export type DueState = "PAID" | "PARTIAL" | "UNPAID";
+
+export interface MyDue {
+  collectionId: string;
+  title: string;
+  dueDate: string;
+  overdue: boolean;
+  amountKobo: number;
+  paidKobo: number;
+  owedKobo: number;
+  state: DueState;
+}
+
+export interface PaymentRecord {
+  id: string;
+  direction: "IN" | "OUT";
+  categoryLabel: string;
+  amountKobo: number;
+  collection?: { id: string; name: string };
+  method: "CASH" | "TRANSFER" | "POS";
+  occurredOn: string;
+  note?: string;
+  reversesId?: string;
+  reversed: boolean;
+  hasReceipt: boolean;
+}
+
+export interface MyDues {
+  owedKobo: number;
+  open: MyDue[];
+  history: PaymentRecord[];
+}

@@ -187,3 +187,15 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 .flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .flip-back { position: absolute; inset: 0; transform: rotateY(180deg); }
 .flip svg { width: 100%; height: auto; display: block; border-radius: 14px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); }
+
+/* ---------- M3: dues ---------- */
+.big-number { font: 600 40px/1 var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.pill { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font: 700 11px var(--font); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+.pill-PAID { background: rgba(70, 192, 138, 0.16); color: #46c08a; }
+.pill-PARTIAL { background: rgba(240, 180, 41, 0.16); color: #f0b429; }
+.pill-UNPAID { background: rgba(229, 72, 77, 0.16); color: #ff7a7e; }
+.progress-bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.progress-bar > span { display: block; height: 100%; background: #46c08a; border-radius: 4px; }
+.money-in { color: #46c08a; }
+.money-out { color: #ff7a7e; }
+.struck { text-decoration: line-through; opacity: 0.55; }
