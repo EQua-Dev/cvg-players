@@ -1,12 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { api, errorMessage, REASON_LABEL, type OutReason, type Session } from "@/lib/api";
+import { api, errorMessage, REASON_LABEL, type Availability, type OutReason } from "@/lib/api";
 import { clock, weekdayLong } from "@/lib/format";
 import { useToast } from "@/components/Toast";
 
-/** "I'm in / I'm out" for one session. Out asks why with one tap. */
-export function Rsvp({ session, onChange, big = false }: { session: Session; onChange: (s: Session) => void; big?: boolean }) {
+interface RsvpTarget {
+  id: string;
+  date: string;
+  status: string;
+  me?: { status: Availability; reason?: OutReason; locked: boolean; lockAt: string };
+}
+
+/** "I'm in / I'm out" for a training session or a match. Out asks why with one tap. */
+export function Rsvp<T extends RsvpTarget>({ session, onChange, big = false, path }: { session: T; onChange: (s: T) => void; big?: boolean; path?: string }) {
   const toast = useToast();
   const [asking, setAsking] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -17,7 +24,7 @@ export function Rsvp({ session, onChange, big = false }: { session: Session; onC
   async function set(status: "IN" | "OUT", reason?: OutReason) {
     setBusy(true);
     try {
-      const s = await api<Session>(`/training/sessions/${session.id}/availability`, { method: "PUT", body: { status, reason } });
+      const s = await api<T>(path ?? `/training/sessions/${session.id}/availability`, { method: "PUT", body: { status, reason } });
       onChange(s);
       if (navigator.vibrate) navigator.vibrate(12);
       toast.show(status === "IN" ? `You're in for ${weekdayLong(session.date).toLowerCase().replace(/^./, (c) => c.toUpperCase())} ✓` : "Marked out");

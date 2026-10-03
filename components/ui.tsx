@@ -22,6 +22,7 @@ export function TopBar({ back }: { back?: string }) {
 
 const TABS = [
   { href: "/", label: "Home", icon: "M4 10.5 12 4l8 6.5M6 9.5V20h12V9.5" },
+  { href: "/matches", label: "Matches", icon: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 7.5l3.8 2.8-1.5 4.4H9.7l-1.5-4.4L12 7.5ZM12 3v4.5M20.5 10.3l-4.7 0M17.3 19l-3-4.3M6.7 19l3-4.3M3.5 10.3l4.7 0" },
   { href: "/training", label: "Training", icon: "M9 12l2 2 4-4M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" },
   { href: "/dues", label: "Dues", icon: "M3 7h18v10H3zM12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM6 10v.01M18 14v.01" },
   { href: "/squad", label: "Squad", icon: "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.5 19a5.5 5.5 0 0 1 11 0M16 6.5a3 3 0 0 1 0 5.5M17 14.5a5.5 5.5 0 0 1 3.5 4.5" },

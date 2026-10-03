@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api, type MyDues, type Profile, type ProfilingResult, type Session } from "@/lib/api";
-import { clock, firstName, greeting, jersey, naira, STATUS_LABEL, weekdayLong } from "@/lib/format";
+import { api, type MatchView, type MyDues, type Profile, type ProfilingResult, type Session } from "@/lib/api";
+import { clock, firstName, greeting, jersey, naira, sessionDay, STATUS_LABEL, weekdayLong } from "@/lib/format";
 import { Rsvp } from "@/components/Rsvp";
 import { useSession } from "@/components/Session";
 import { TopBar } from "@/components/ui";
@@ -21,6 +21,8 @@ export default function HomePage() {
   const [style, setStyle] = useState<ProfilingResult | null | undefined>(undefined);
   const [dues, setDues] = useState<MyDues | null>(null);
   const [next, setNext] = useState<Session | null>(null);
+  const [match, setMatch] = useState<MatchView | null>(null);
+  const [played, setPlayed] = useState<MatchView[]>([]);
 
   useEffect(() => {
     api<Profile>("/me/profile").then(setProfile).catch(() => {});
@@ -31,10 +33,20 @@ export default function HomePage() {
     api<Session[]>("/training/sessions")
       .then((l) => setNext(l.find((s) => s.status === "SCHEDULED") ?? null))
       .catch(() => {});
+    api<MatchView[]>("/matches?when=upcoming")
+      .then((l) => setMatch(l.find((x) => x.status === "SCHEDULED") ?? null))
+      .catch(() => {});
+    api<MatchView[]>("/matches?when=past")
+      .then((l) => setPlayed(l.filter((x) => x.inSquad && ((x.potmOpen && !x.votedPotm) || !x.gaveOpinion)).slice(0, 3)))
+      .catch(() => {});
   }, []);
 
   // The home screen is a to-do list: only what needs this member now.
   const todos: Todo[] = [];
+  for (const p of played) {
+    if (p.potmOpen && !p.votedPotm) todos.push({ href: `/matches/${p.id}`, title: "Vote Player of the Match", hint: `vs ${p.opponent} · ${p.ourScore}–${p.theirScore}` });
+    else if (!p.gaveOpinion) todos.push({ href: `/matches/${p.id}`, title: "Your view on the match", hint: `vs ${p.opponent} · 3 taps` });
+  }
   if (dues && dues.owedKobo > 0) {
     const overdue = dues.open.some((d) => d.overdue);
     todos.push({ href: "/dues", title: `Pay ${naira(dues.owedKobo)}`, hint: overdue ? "Overdue" : dues.open.filter((d) => d.state !== "PAID").map((d) => d.title).join(" · ") });
@@ -66,6 +78,18 @@ export default function HomePage() {
               <div className="muted small" style={{ marginTop: 4 }}>{[next.focus, next.venue].filter(Boolean).join(" · ")} · {next.inCount} in</div>
             </div>
             <Rsvp session={next} onChange={setNext} big />
+          </div>
+        )}
+
+        {match && (
+          <div className="card stack" style={{ gap: 12, borderLeft: "3px solid var(--orange)" }}>
+            <Link href={`/matches/${match.id}`} className="stack" style={{ gap: 4 }}>
+              <span className="label">Next match</span>
+              <strong style={{ fontSize: 20 }}>vs {match.opponent}</strong>
+              <span className="mono small" style={{ color: "var(--orange)", fontWeight: 600 }}>{sessionDay(match.date)} · {clock(match.time)} · <span className="muted">{match.venue}</span></span>
+            </Link>
+            {match.myLineup && <span className="lineup-me">{match.myLineup === "STARTING" ? "⚡ You're starting" : "You're on the bench"}</span>}
+            <Rsvp session={match} onChange={setMatch} path={`/matches/${match.id}/availability`} />
           </div>
         )}
 
@@ -121,7 +145,7 @@ export default function HomePage() {
 
         <div className="card stack" style={{ gap: 6, borderStyle: "dashed" }}>
           <span className="label">Coming soon</span>
-          <span className="muted small">Matches · Votes · FUT cards</span>
+          <span className="muted small">FUT cards · Squad ratings</span>
         </div>
       </main>
     </>
