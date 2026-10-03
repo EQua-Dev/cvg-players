@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { api, type MatchView, type MyDues, type Profile, type ProfilingResult, type Session } from "@/lib/api";
+import { api, type MatchView, type MyCards, type MyDues, type MyRating, type Profile, type ProfilingResult, type Session } from "@/lib/api";
 import { clock, firstName, greeting, jersey, naira, sessionDay, STATUS_LABEL, weekdayLong } from "@/lib/format";
 import { Rsvp } from "@/components/Rsvp";
 import { useSession } from "@/components/Session";
@@ -23,6 +23,8 @@ export default function HomePage() {
   const [next, setNext] = useState<Session | null>(null);
   const [match, setMatch] = useState<MatchView | null>(null);
   const [played, setPlayed] = useState<MatchView[]>([]);
+  const [rating, setRating] = useState<MyRating | null>(null);
+  const [myCard, setMyCard] = useState<MyCards | null>(null);
 
   useEffect(() => {
     api<Profile>("/me/profile").then(setProfile).catch(() => {});
@@ -36,6 +38,8 @@ export default function HomePage() {
     api<MatchView[]>("/matches?when=upcoming")
       .then((l) => setMatch(l.find((x) => x.status === "SCHEDULED") ?? null))
       .catch(() => {});
+    api<MyRating | undefined>("/ratings/me").then((r) => setRating(r ?? null)).catch(() => {});
+    api<MyCards>("/cards/me").then(setMyCard).catch(() => {});
     api<MatchView[]>("/matches?when=past")
       .then((l) => setPlayed(l.filter((x) => x.inSquad && ((x.potmOpen && !x.votedPotm) || !x.gaveOpinion)).slice(0, 3)))
       .catch(() => {});
@@ -46,6 +50,9 @@ export default function HomePage() {
   for (const p of played) {
     if (p.potmOpen && !p.votedPotm) todos.push({ href: `/matches/${p.id}`, title: "Vote Player of the Match", hint: `vs ${p.opponent} · ${p.ourScore}–${p.theirScore}` });
     else if (!p.gaveOpinion) todos.push({ href: `/matches/${p.id}`, title: "Your view on the match", hint: `vs ${p.opponent} · 3 taps` });
+  }
+  if (rating && rating.done < rating.total) {
+    todos.push({ href: "/rate", title: "Rate your squad", hint: `${rating.total - rating.done} of ${rating.total} left · secret` });
   }
   if (dues && dues.owedKobo > 0) {
     const overdue = dues.open.some((d) => d.overdue);
@@ -115,6 +122,16 @@ export default function HomePage() {
           </div>
         </Link>
 
+        {myCard?.latest && (
+          <Link href="/cards" className="card card-link">
+            <span className="stack" style={{ gap: 4 }}>
+              <span className="label">Your FUT card</span>
+              <strong>{myCard.latest.published ? `${myCard.latest.ovr} ${myCard.latest.position ?? ""}` : "Not enough ratings yet"}</strong>
+            </span>
+            <span aria-hidden>→</span>
+          </Link>
+        )}
+
         {style && (
           <Link href="/profiling" className="card card-link">
             <span className="stack" style={{ gap: 4 }}>
@@ -143,10 +160,6 @@ export default function HomePage() {
           ))
         )}
 
-        <div className="card stack" style={{ gap: 6, borderStyle: "dashed" }}>
-          <span className="label">Coming soon</span>
-          <span className="muted small">FUT cards · Squad ratings</span>
-        </div>
       </main>
     </>
   );

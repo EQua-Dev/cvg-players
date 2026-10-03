@@ -15,6 +15,8 @@ Part of the CVG FC Club Management System, built by Devstrike Digital Limited.
 | Set passcode | Short steps, one box per screen, with "Skip for now" on first sign-in |
 | Home | Member pass (tap for ID card), your style, and a "For you" to-do list (photo, questionnaire, passcode) |
 | **Matches** | Your played/goals/assists/POTM, upcoming matches with **I'm in / I'm out** and "You're starting" once the lineup is out, results. Match page: lineup on a pitch with you highlighted, full-time score and scorers, **tap a face to vote POTM** (secret, change until it closes), and your view in a few taps: what went well, what to fix, optional words and self-rating (teammates see it without your name). Home shows the next match and "Vote" / "Your view" to-dos |
+| **Rate the squad** | When a round is open: progress ("3 of 18 rated"), then one screen per player with 20 rows of Weak · Fair · Good · Strong · Elite · ? (don't know). Their position's block first, every tap saves, last round's answers pre-filled, "Next player →". Secret |
+| **My FUT card** | Card drawn as SVG in Bronze / Silver / Gold / CVG Elite, alternate cards for your other positions, "rated best in…", Save to phone (PNG), you vs the squad per stat (only you see it), and your rounds. Squad page shows everyone's published cards |
 | **Training** | Your attendance %, streak and sessions, every upcoming session with **I'm in / I'm out** (in by default; out asks why with one tap; locks 2h before), and your record. Home shows the next session with the same buttons |
 | Squad | Current squad by jersey, with you highlighted |
 | **My dues** | What you owe (or "All paid ✓"), each open collection with progress, and your payment history including corrections. Home shows "Pay ₦X" when something is owed |

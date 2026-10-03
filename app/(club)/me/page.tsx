@@ -51,6 +51,7 @@ export default function MePage() {
 
         <div className="list">
           <Link href="/setup" className="list-row"><span className="grow">Edit profile</span><span aria-hidden>→</span></Link>
+          <Link href="/cards" className="list-row"><span className="grow">My FUT card</span><span aria-hidden>→</span></Link>
           <Link href="/card" className="list-row"><span className="grow">My ID card</span><span aria-hidden>→</span></Link>
           <Link href="/profiling" className="list-row"><span className="grow">How I play</span><span aria-hidden>→</span></Link>
           <Link href="/passcode" className="list-row">

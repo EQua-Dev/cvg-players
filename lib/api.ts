@@ -402,3 +402,29 @@ export const SIDE_LABEL: Record<MatchSide, string> = { HOME: "Home", AWAY: "Away
 
 export interface RecordMatch { matchId: string; date: string; opponent: string; ourScore: number; theirScore: number; started: boolean; goals: number; assists: number; potm: boolean }
 export interface MatchRecord { played: number; started: number; goals: number; assists: number; potm: number; cleanSheets: number; recent: RecordMatch[] }
+
+// ---------- M6: ratings and FUT cards ----------
+
+export type Tier = "BRONZE" | "SILVER" | "GOLD" | "ELITE";
+
+export interface RatingWindowView { id: string; title: string; opensAt: string; closesAt: string; open: boolean; closedAt?: string; finished: number; raters: number; cards?: number }
+export interface RateeRow { memberId: string; name: string; jerseyNumber?: number; photoUrl?: string; position?: string; answered: number; total: number; done: boolean; isMe: boolean }
+export interface MyRating { window: RatingWindowView; players: RateeRow[]; done: number; total: number }
+export interface AttrRow { code: string; label: string; title: string; score?: number; prefilled: boolean }
+export interface RateSheet {
+  memberId: string; name: string; jerseyNumber?: number; photoUrl?: string; position?: string; isMe: boolean;
+  blocks: { block: string; label: string; attrs: AttrRow[] }[]; nextMemberId?: string; index: number; total: number;
+}
+
+export interface CardStat { code: string; label: string; title: string; value?: number; peers: number; self?: number }
+export interface GroupCard { group: PositionGroup; ovr?: number; tier?: Tier; published: boolean; stats: CardStat[] }
+export interface CardView {
+  memberId: string; name: string; fullName: string; jerseyNumber?: number; photoUrl?: string; stateOfOrigin?: string;
+  position?: string; group?: PositionGroup; ovr?: number; tier?: Tier; published: boolean; stats: CardStat[];
+  bestGroup?: PositionGroup; groups: GroupCard[]; otherGroups: PositionGroup[]; round: string; windowId: string; createdAt: string;
+}
+export interface MyCards { latest?: CardView; history: { windowId: string; round: string; ovr?: number; tier?: Tier; createdAt: string }[] }
+
+export const GROUP_LABEL: Record<PositionGroup, string> = { GK: "Goalkeeper", DEF: "Defence", MID: "Midfield", ATT: "Attack" };
+export const GROUP_POSITION: Record<PositionGroup, string> = { GK: "GK", DEF: "CB", MID: "CM", ATT: "ST" };
+export const TIER_LABEL: Record<Tier, string> = { BRONZE: "Bronze", SILVER: "Silver", GOLD: "Gold", ELITE: "CVG Elite" };
